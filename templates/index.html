@@ -2,27 +2,30 @@
 
 <head>
     <title>Mitigating Circumstances</title>
+    <!-- Page Specific CSS -->
+    <link rel="stylesheet" type="text/css" href="/static/index.css">
+
     <!-- Required meta tags -->
     <meta charset="utf-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Importing Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
         crossorigin="anonymous">
 
+    <!-- Firebase OAuth Setup Scripts -->
     <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
     <script>
         // Initialize Firebase
         var config = {
-        apiKey: "AIzaSyBpbVNSh-Fd6Rg51Hmm6quZ_mJWQ-7hGVM",
-        authDomain: "mitcircs-rt.firebaseapp.com",
-        databaseURL: "https://mitcircs-rt.firebaseio.com",
-        projectId: "mitcircs-rt",
-        storageBucket: "mitcircs-rt.appspot.com",
-        messagingSenderId: "797167968095"
-    };
-    firebase.initializeApp(config);
-</script>
+            apiKey: "AIzaSyBpbVNSh-Fd6Rg51Hmm6quZ_mJWQ-7hGVM",
+            authDomain: "mitcircs-rt.firebaseapp.com",
+            databaseURL: "https://mitcircs-rt.firebaseio.com",
+            projectId: "mitcircs-rt",
+            storageBucket: "mitcircs-rt.appspot.com",
+            messagingSenderId: "797167968095"
+        };
+        firebase.initializeApp(config);
+    </script>
 
     <script src="https://cdn.firebase.com/libs/firebaseui/3.5.0/firebaseui.js"></script>
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.0/firebaseui.css" />
@@ -61,11 +64,11 @@
     <nav class="navbar navbar-dark bg-primary">
         <a class="navbar-brand" href="">MitCircs</a>
     </nav>
-    <div class="container">
-        <div class="jumbotron">
-            <h1 class="display-4">Welcome to MitCircs</h1>
-        </div>
+
+    <div class="login jumbotron jumbotron-fluid">
+        <h1 class="display-4">Welcome to MitCircs</h1>
     </div>
+
     <!-- Bootstrap Requirements -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
