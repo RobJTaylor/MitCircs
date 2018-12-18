@@ -1,0 +1,7 @@
+Flask==0.12.4
+pyjwt==1.6.4
+flask-cors==3.0.7
+google-auth==1.6.1
+requests==2.20.1
+requests-toolbelt==0.8.0
+jinja2==2.10
