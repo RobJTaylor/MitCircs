@@ -9,9 +9,30 @@ var config = {
 };
 firebase.initializeApp(config);
 
+
+var backendHostUrl = 'https://mitcircs.robtaylor.info';
+
+var userIdToken = null;
+
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        user.getToken().then(function(idToken) {
+            userIdToken = idToken;
+        });   
+    }
+    $.ajax(backendHostUrl, {
+        /* Set header for the XMLHttpRequest to get data from the web server
+        associated with userIdToken */
+        headers: {
+          'Authorization': 'Bearer ' + userIdToken
+        }
+    })
+}
+)
+
 // FirebaseUI config.
 var uiConfig = {
-    signInSuccessUrl: 'https://mitcircs.robtaylor.info/dashboard',
+    signInSuccessUrl: 'https://mitcircs.robtaylor.info',
     signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -33,3 +54,4 @@ var uiConfig = {
 var ui = new firebaseui.auth.AuthUI(firebase.auth());
 // The start method will wait until the DOM is loaded.
 ui.start('#firebaseui-auth-container', uiConfig);
+
