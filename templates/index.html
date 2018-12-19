@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Mitigating Circumstances</title>
+    <title>MitCircs</title>
     <!-- Page Specific CSS -->
     <link rel="stylesheet" type="text/css" href="/static/index.css">
 
@@ -35,7 +35,7 @@
     <script type="text/javascript">
         // FirebaseUI config.
         var uiConfig = {
-            signInSuccessUrl: '<url-to-redirect-to-on-success>',
+            signInSuccessUrl: 'https://mitcircs.robtaylor.info/dashboard',
             signInOptions: [
                 // Leave the lines as is for the providers you want to offer your users.
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -49,7 +49,7 @@
             tosUrl: '<your-tos-url>',
             // Privacy policy url/callback.
             privacyPolicyUrl: function () {
-                window.location.assign('<your-privacy-policy-url>');
+                window.location.assign('https://mitcircs.robtaylor.info');
             }
         };
 
@@ -65,9 +65,10 @@
         <a class="navbar-brand" href="">MitCircs</a>
     </nav>
 
-    <div class="login jumbotron jumbotron-fluid">
+    <div class="login jumbotron">
         <h1 class="display-4">Welcome to MitCircs</h1>
-        <p class="lead">MitCircs is an online Mitigating Circumstances system. Please login/sign up using one of the services below.</p>
+        <p class="lead">MitCircs is an online Mitigating Circumstances system. Please login or sign up using one of the services below.</p>
+        <div id="firebaseui-auth-container" class="auth"></div>
     </div>
 
     <!-- Bootstrap Requirements -->
