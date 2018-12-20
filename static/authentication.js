@@ -67,7 +67,7 @@ $(function () {
                 firebase.auth.EmailAuthProvider.PROVIDER_ID
             ],
             // Terms of service url
-            'tosUrl': 'https://mitigated-0.appspot.com',
+            'tosUrl': 'https://mitcircs.robtaylor.info',
         };
 
         var ui = new firebaseui.auth.AuthUI(firebase.auth());
