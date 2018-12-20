@@ -28,18 +28,17 @@ app = Flask(__name__)
 requests_toolbelt.adapters.appengine.monkeypatch()
 HTTP_REQUEST = google.auth.transport.requests.Request()
     
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
-
-@app.route('/dashboard')
-def dashboard():
-    if request.headers['Authorization'].split(' ').pop() is None:
-        return render_template('index.html')           
-    else:
+    if 'Authorization' in request.headers:
         id_token = request.headers['Authorization'].split(' ').pop()
         claims = google.oauth2.id_token.verify_firebase_token(id_token, HTTP_REQUEST)
-        return render_template('dashboard.html')
+        if claims:
+            return 'invalid', 401
+        else:
+            return 'invalid', 402     
+    else:
+        return render_template('index.html')
 
 @app.errorhandler(500)
 def server_error(e):
