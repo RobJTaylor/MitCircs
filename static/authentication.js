@@ -1,7 +1,7 @@
 $(function () {
 
     // This is the host for the backend.
-    var backendHostUrl = '/';
+    var backendHostUrl = 'https://mitcircs.robtaylor.info';
 
     // Initialize Firebase
     var config = {
@@ -25,7 +25,6 @@ $(function () {
         // [START onAuthStateChanged]
         firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
-                $('#logged-out').hide();
                 var name = user.displayName;
 
                 /* If the provider gives a display name, use the name for the
@@ -36,16 +35,10 @@ $(function () {
                     userIdToken = idToken;
 
                     /* Now that the user is authenicated, fetch the notes. */
-                    fetchNotes();
-
-                    $('#user').text(welcomeName);
-                    $('#logged-in').show();
-
+                    ajaxToken();
                 });
 
             } else {
-                $('#logged-in').hide();
-                $('#logged-out').show();
 
             }
             // [END onAuthStateChanged]
@@ -58,7 +51,7 @@ $(function () {
     // Firebase log-in widget
     function configureFirebaseLoginWidget() {
         var uiConfig = {
-            'signInSuccessUrl': '/',
+            'signInSuccessUrl': '/dashboard',
             'signInOptions': [
                 // Leave the lines as is for the providers you want to offer your users.
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -74,13 +67,14 @@ $(function () {
         ui.start('#firebaseui-auth-container', uiConfig);
     }
 
-    function fetchNotes() {
+    function ajaxToken() {
         $.ajax({
             type: 'POST',
             url: '/',
             headers: { 'Authorization': 'Bearer ' + userIdToken, },
             success: function (response) {
                 console.log(response);
+                window.location.href = '/dashboard';
             },
             error: function (error) {
                 console.log(error);
