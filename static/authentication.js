@@ -33,9 +33,11 @@ $(function () {
 
                 user.getToken().then(function (idToken) {
                     userIdToken = idToken;
+                    user_name = user.name || user.email;
+                    user_email = user.email;
 
                     /* Now that the user is authenicated, fetch the notes. */
-                    ajaxToken();
+                    ajaxToken(userIdToken, user_name, user_email);
                 });
 
             } else {
@@ -67,11 +69,15 @@ $(function () {
         ui.start('#firebaseui-auth-container', uiConfig);
     }
 
-    function ajaxToken() {
+    function ajaxToken(userIdToken, user_name, user_email) {
         $.ajax({
             type: 'POST',
             url: '/',
-            headers: { 'Authorization': 'Bearer ' + userIdToken, },
+            headers: { 
+                'Authorization': 'Bearer ' + userIdToken, 
+                'Email': user_email, 
+                'Username': user_name,
+            },
             success: function (response) {
                 console.log(response);
                 window.location.href = '/dashboard';

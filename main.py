@@ -28,12 +28,20 @@ app = Flask(__name__)
 requests_toolbelt.adapters.appengine.monkeypatch()
 HTTP_REQUEST = google.auth.transport.requests.Request()
 
+class User(ndb.Model):
+    name = ndb.StringProperty()
+    account = ndb.StringProperty()
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if 'Authorization' in request.headers:
         id_token = request.headers['Authorization'].split(' ').pop()
+        email = request.headers['Email'].split(' ').pop()
+        name = request.headers['Username'].split(' ').pop()
         claims = google.oauth2.id_token.verify_firebase_token(id_token, HTTP_REQUEST)
         if claims:
+            user_id = registerUser(email, name)
+            logging.exception(user_id)
             return 'authorized', 402
         else:
             return 'Not authorized', 401     
@@ -43,6 +51,10 @@ def index():
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     return render_template('dashboard.html')
+
+def registerUser(email, name):
+    user = User(id = email, name = name, account = "student")
+    return user.put()
 
 @app.errorhandler(500)
 def server_error(e):
