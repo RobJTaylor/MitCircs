@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 import webapp2, logging
-from flask import Flask, jsonify, request, render_template, redirect, url_for, g
+from flask import Flask, jsonify, request, render_template, redirect, url_for, session
 import flask_cors
 from google.appengine.ext import ndb
 import google.auth
@@ -24,6 +24,7 @@ import google.oauth2.id_token
 import requests_toolbelt.adapters.appengine
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'mitcircs_super_secret_key'
 
 requests_toolbelt.adapters.appengine.monkeypatch()
 HTTP_REQUEST = google.auth.transport.requests.Request()
@@ -41,7 +42,7 @@ def index():
         claims = google.oauth2.id_token.verify_firebase_token(id_token, HTTP_REQUEST)
         if claims:
             user_id = registerUser(email, name)
-            logging.exception(user_id)
+            session['userId'] = email
             return 'authorized', 402
         else:
             return 'Not authorized', 401     
@@ -50,6 +51,7 @@ def index():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+    logging.exception(session['userId'])
     return render_template('dashboard.html')
 
 def registerUser(email, name):
@@ -63,5 +65,4 @@ def server_error(e):
     return 'An internal error occurred.', 500
     
 if __name__=='__main__':
-    app.secret_key = 'mitcircs_super_secret_key'
     app.run(debug=True)
