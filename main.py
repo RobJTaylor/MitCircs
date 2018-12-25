@@ -43,6 +43,7 @@ def index():
         if claims:
             user_id = registerUser(email, name)
             session['userId'] = email
+            session['username'] = name
             return 'authorized', 402
         else:
             return 'Not authorized', 401     
@@ -52,7 +53,7 @@ def index():
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     logging.exception(session['userId'])
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', user=session['userId'], name=session['username'])
 
 def registerUser(email, name):
     user = User(id = email, name = name, account = "student")
