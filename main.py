@@ -14,17 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import webapp2, logging
+import webapp2, logging, os
 from flask import Flask, jsonify, request, render_template, redirect, url_for, session
 import flask_cors
-from google.appengine.ext import ndb
+from google.appengine.ext import ndb, blobstore, webapp
+from google.appengine.ext.webapp import blobstore_handlers
 import google.auth
 import google.auth.transport.requests
 import google.oauth2.id_token
 import requests_toolbelt.adapters.appengine
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = '/static/submitted_files'
+ALLOWED_EXTENSIONS = set (['doc', 'docx', 'pdf', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mitcircs_super_secret_key'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 requests_toolbelt.adapters.appengine.monkeypatch()
 HTTP_REQUEST = google.auth.transport.requests.Request()
@@ -39,6 +45,7 @@ class Request(ndb.Model):
     reason = ndb.StringProperty()
     instructor = ndb.StringProperty()
     description = ndb.StringProperty()
+    file_url = ndb.StringProperty()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -74,6 +81,9 @@ def dashboard():
     if session.get('success'):
         session['success'] = None
         return render_template('dashboard.html', user=session['userId'], name=session['username'], success=1)
+    elif session.get('failure'):
+        session['failure'] = None
+        return render_template('dashboard.html', user=session['userId'], name=session['username'], failure=1)
 
     return render_template('dashboard.html', user=session['userId'], name=session['username'])
 
@@ -83,9 +93,16 @@ def submit_request():
 
 @app.route('/submit_handler', methods=['GET', 'POST'])
 def submit_handler():
-    submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'])
-    if submit is not None:
-        session['success'] = 1
+    file = request.files['file']
+    if file and extension_check(file.filename):
+        filename = secure_filename(file.filename)
+        file_url = upload_file(request.files.get('image'))
+        #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_url = file_url)
+        if submit is not None:
+            session['success'] = 1
+    else:
+        session['failure'] = 1
     return render_template('submit_handler.html')
 
 @app.route('/manage_requests', methods=['GET', 'POST'])
@@ -102,9 +119,22 @@ def registerUser(email, name):
     user = User(id = email, name = name, account = "student")
     return user.put()
 
-def submit_form(email, name, reason, instructor, description):
-    request = Request(email = email, name = name, reason = reason, instructor = instructor, description = description)
+def submit_form(email, name, reason, instructor, description, file_url):
+    request = Request(email = email, name = name, reason = reason, instructor = instructor, description = description, )
     return request.put()
+
+def extension_check(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def upload_file(file):
+    public_url = storage.upload_file(
+        file.read(),
+        file.filename,
+        file.content_type
+    )
+
+    return public_url
 
 @app.errorhandler(500)
 def server_error(e):

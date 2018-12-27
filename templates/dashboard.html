@@ -60,6 +60,11 @@
         <strong>Success:</strong> The form was submitted successfully.
     </div>
     {% endif %}
+    {% if failure is defined %}
+    <div class="alert alert-danger" role="alert">
+        <strong>Failure:</strong> There was an error submitting the form. Please ensure all fields are filled correctly and the file extension is accepted.
+    </div>
+    {% endif %}
 
     <div class="jumbotron">
         <h1 class="display-5">Welcome, {{name}}!</h1>
