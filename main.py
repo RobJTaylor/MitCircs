@@ -68,7 +68,7 @@ def dashboard():
 
 @app.route('/submit_request', methods=['GET', 'POST'])
 def submit_request():
-    return render_template('submit_request.html')
+    return render_template('submit_request.html', user=session['userId'], name=session['username'])
 
 @app.route('/manage_requests', methods=['GET', 'POST'])
 def manage_requests():
