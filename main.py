@@ -52,7 +52,7 @@ def index():
         claims = google.oauth2.id_token.verify_firebase_token(id_token, HTTP_REQUEST)
         if claims:
             user_id = registerUser(email, name)
-            return 'authorized', 402
+            return 'authorized'
         else:
             return 'Not authorized', 401     
     else:
