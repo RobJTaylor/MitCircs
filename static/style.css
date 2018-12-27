@@ -13,4 +13,5 @@ a {
 
 .sign-out {
     color: red !important;
+    font-weight: bold !important;
 }
