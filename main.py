@@ -35,6 +35,7 @@ class User(ndb.Model):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    #Check for auth token from ajax call (firebase)
     if 'Authorization' in request.headers:
         id_token = request.headers['Authorization'].split(' ').pop()
         email = request.headers['Email'].split(' ').pop()
@@ -44,7 +45,7 @@ def index():
             user_id = registerUser(email, name)
             session['userId'] = email
             session['username'] = name
-            return 'authorized', 402
+            return 'authorized'
         else:
             return 'Not authorized', 401     
     else:
@@ -62,6 +63,12 @@ def submit_request():
 def manage_requests():
     return render_template('manage_requests.html')
 
+@app.route('/sign-out')
+def signOut():
+    session.clear()
+    return render_template('sign-out.html')
+
+#Resigtser user after logging in via Firebase
 def registerUser(email, name):
     user = User(id = email, name = name, account = "student")
     return user.put()
