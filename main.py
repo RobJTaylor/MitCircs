@@ -52,8 +52,15 @@ def index():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    logging.exception(session['userId'])
     return render_template('dashboard.html', user=session['userId'], name=session['username'])
+
+@app.route('/submit_request', methods=['GET', 'POST'])
+def submit_request():
+    return render_template('submit_request.html')
+
+@app.route('/manage_requests', methods=['GET', 'POST'])
+def manage_requests():
+    return render_template('manage_requests.html')
 
 def registerUser(email, name):
     user = User(id = email, name = name, account = "student")
