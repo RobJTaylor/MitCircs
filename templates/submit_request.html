@@ -50,19 +50,19 @@
     <div class="jumbotron">
         <h1 class="display-5">Submit Request</h1>
         <h3>Fill out the form below to submit your request:</h3>
-        <form>
+        <form action="/submit_handler" method="POST">
             <div class="form-group">
                 <label for="email">Email address:</label>
-                <input type="email" class="form-control" id="email" placeholder="{{user}}" readonly>
+                <input type="email" class="form-control" name="email" value="{{user}}" readonly>
             </div>
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" aria-describedby="nameHelp" placeholder="{{name}}">
+                <input type="text" class="form-control" name="name" aria-describedby="nameHelp" placeholder="{{name}}">
                 <small id="nameHelp" class="form-text text-muted">Your email address or name may be in the above field due to the data available from Google. Please ensure your name is typed into the field.</small>
             </div>
             <div class="form-group">
                 <label for="reason">Reason for mitigating circumstance:</label>
-                <select class="form-control" id="reason">
+                <select class="form-control" name="reason">
                     <option>Illness</option>
                     <option>Family difficulties</option>
                     <option>Bereavement</option>
@@ -71,7 +71,7 @@
             </div>
             <div class="form-group">
                 <label for="instructor">Course instructor:</label>
-                <select class="form-control" id="instructor">
+                <select class="form-control" name="instructor">
                     <option>Placeholder 1</option>
                     <option>Placeholder 2</option>
                     <option>Placeholder 3</option>
@@ -79,12 +79,12 @@
             </div>
             <div class="form-group">
                 <label for="description">Description:</label>
-                <textarea class="form-control" id="description" rows="5"></textarea>
+                <textarea class="form-control" name="description" rows="5"></textarea>
             </div>
-            <div class="form-group">
+            <!--<div class="form-group">
                 <label for="upload">Supporting documents:</label>
-                <input type="file" class="form-control-file" id="input">
-            </div>
+                <input type="file" class="form-control-file" name="input">
+            </div>-->
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>

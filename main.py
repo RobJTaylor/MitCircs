@@ -33,6 +33,13 @@ class User(ndb.Model):
     name = ndb.StringProperty()
     account = ndb.StringProperty()
 
+class Request(ndb.Model):
+    email = ndb.StringProperty()
+    name = ndb.StringProperty()
+    reason = ndb.StringProperty()
+    instructor = ndb.StringProperty()
+    description = ndb.StringProperty()
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     session['userId'] = None
@@ -64,11 +71,22 @@ def dashboard():
         session['error'] = 1
         return redirect(url_for('index'))
 
+    if session.get('success'):
+        session['success'] = None
+        return render_template('dashboard.html', user=session['userId'], name=session['username'], success=1)
+
     return render_template('dashboard.html', user=session['userId'], name=session['username'])
 
 @app.route('/submit_request', methods=['GET', 'POST'])
 def submit_request():
     return render_template('submit_request.html', user=session['userId'], name=session['username'])
+
+@app.route('/submit_handler', methods=['GET', 'POST'])
+def submit_handler():
+    submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'])
+    if submit is not None:
+        session['success'] = 1
+    return render_template('submit_handler.html')
 
 @app.route('/manage_requests', methods=['GET', 'POST'])
 def manage_requests():
@@ -83,6 +101,10 @@ def signOut():
 def registerUser(email, name):
     user = User(id = email, name = name, account = "student")
     return user.put()
+
+def submit_form(email, name, reason, instructor, description):
+    request = Request(email = email, name = name, reason = reason, instructor = instructor, description = description)
+    return request.put()
 
 @app.errorhandler(500)
 def server_error(e):

@@ -55,6 +55,12 @@
         </div>
     </nav>
 
+    {% if success is defined %}
+    <div class="alert alert-success" role="alert">
+        <strong>Success:</strong> The form was submitted successfully.
+    </div>
+    {% endif %}
+
     <div class="jumbotron">
         <h1 class="display-5">Welcome, {{name}}!</h1>
 
