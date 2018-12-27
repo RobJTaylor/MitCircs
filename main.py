@@ -35,17 +35,24 @@ class User(ndb.Model):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    session['userId'] = None
+    session['username'] = None
+
+    if session.get('error'):
+        session['error'] = None
+        return render_template('index.html', error=session['error'])
+
     #Check for auth token from ajax call (firebase)
     if 'Authorization' in request.headers:
         id_token = request.headers['Authorization'].split(' ').pop()
         email = request.headers['Email'].split(' ').pop()
         name = request.headers['Username'].split(' ').pop()
+        session['userId'] = email
+        session['username'] = name
         claims = google.oauth2.id_token.verify_firebase_token(id_token, HTTP_REQUEST)
         if claims:
             user_id = registerUser(email, name)
-            session['userId'] = email
-            session['username'] = name
-            return 'authorized'
+            return 'authorized', 402
         else:
             return 'Not authorized', 401     
     else:
@@ -53,6 +60,10 @@ def index():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+    if session['userId'] == None:
+        session['error'] = 1
+        return redirect(url_for('index'))
+
     return render_template('dashboard.html', user=session['userId'], name=session['username'])
 
 @app.route('/submit_request', methods=['GET', 'POST'])
