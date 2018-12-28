@@ -19,11 +19,13 @@ from flask import Flask, jsonify, request, render_template, redirect, url_for, s
 import flask_cors
 from google.appengine.ext import ndb, blobstore, webapp
 from google.appengine.ext.webapp import blobstore_handlers
+from google.appengine.ext.blobstore import BlobKey
 import google.auth
 import google.auth.transport.requests
 import google.oauth2.id_token
 import requests_toolbelt.adapters.appengine
 from werkzeug.utils import secure_filename
+from werkzeug.http import parse_options_header
 
 UPLOAD_FOLDER = '/static/submitted_files'
 ALLOWED_EXTENSIONS = set (['doc', 'docx', 'pdf', 'jpg', 'jpeg'])
@@ -45,7 +47,11 @@ class Request(ndb.Model):
     reason = ndb.StringProperty()
     instructor = ndb.StringProperty()
     description = ndb.StringProperty()
-    file_url = ndb.StringProperty()
+    file_key = ndb.BlobKeyProperty()
+
+class SupportingDocument(ndb.Model):
+    user = ndb.StringProperty()
+    blob_key = ndb.BlobKeyProperty()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -89,16 +95,23 @@ def dashboard():
 
 @app.route('/submit_request', methods=['GET', 'POST'])
 def submit_request():
-    return render_template('submit_request.html', user=session['userId'], name=session['username'])
+    upload = blobstore.create_upload_url('/submit', gs_bucket_name="mitcircs-rt")
+    return render_template('submit_request.html', user=session['userId'], name=session['username'], upload=upload)
 
-@app.route('/submit_handler', methods=['GET', 'POST'])
+@app.route('/submit', methods=['POST'])
 def submit_handler():
     file = request.files['file']
     if file and extension_check(file.filename):
-        filename = secure_filename(file.filename)
-        file_url = upload_file(request.files.get('image'))
-        #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_url = file_url)
+        header = file.headers['Content-Type']
+        blob_key = parse_options_header(header)[1]['blob-key']
+        blob_key = blob_key.replace("encoded_gs_file:","")
+        blobkey = BlobKey(blob_key)
+        supportingDocument = SupportingDocument(
+            user = session['userId'],
+            blob_key=blobkey
+        )
+        supportingDocument.put()
+        submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_key = blobkey)
         if submit is not None:
             session['success'] = 1
     else:
@@ -119,22 +132,13 @@ def registerUser(email, name):
     user = User(id = email, name = name, account = "student")
     return user.put()
 
-def submit_form(email, name, reason, instructor, description, file_url):
-    request = Request(email = email, name = name, reason = reason, instructor = instructor, description = description, )
+def submit_form(email, name, reason, instructor, description, file_key):
+    request = Request(email = email, name = name, reason = reason, instructor = instructor, description = description, file_key = file_key)
     return request.put()
 
 def extension_check(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def upload_file(file):
-    public_url = storage.upload_file(
-        file.read(),
-        file.filename,
-        file.content_type
-    )
-
-    return public_url
 
 @app.errorhandler(500)
 def server_error(e):
