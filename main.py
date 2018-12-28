@@ -27,12 +27,10 @@ import requests_toolbelt.adapters.appengine
 from werkzeug.utils import secure_filename
 from werkzeug.http import parse_options_header
 
-UPLOAD_FOLDER = '/static/submitted_files'
 ALLOWED_EXTENSIONS = set (['doc', 'docx', 'pdf', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mitcircs_super_secret_key'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 requests_toolbelt.adapters.appengine.monkeypatch()
 HTTP_REQUEST = google.auth.transport.requests.Request()
