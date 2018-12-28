@@ -118,7 +118,8 @@ def submit_handler():
 
 @app.route('/manage_requests', methods=['GET', 'POST'])
 def manage_requests():
-    return render_template('manage_requests.html')
+    query = Request.query(Request.email == session['userId'])
+    return render_template('manage_requests.html', requests = query)
 
 @app.route('/sign-out')
 def signOut():
