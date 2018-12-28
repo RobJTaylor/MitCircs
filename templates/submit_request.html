@@ -47,47 +47,51 @@
         </div>
     </nav>
 
-    <div class="jumbotron">
-        <h1 class="display-5">Submit Request</h1>
-        <h3>Fill out the form below to submit your request:</h3>
-        <form action="{{ submitHandler }}" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="email">Email address:</label>
-                <input type="email" class="form-control" name="email" value="{{user}}" readonly>
-            </div>
-            <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" class="form-control" name="name" aria-describedby="nameHelp" value="{{name}}">
-                <small id="nameHelp" class="form-text text-muted">Your email address or name may be in the above field due to the data available from Google. Please ensure your name is typed into the field.</small>
-            </div>
-            <div class="form-group">
-                <label for="reason">Reason for mitigating circumstance:</label>
-                <select class="form-control" name="reason">
-                    <option>Illness</option>
-                    <option>Family difficulties</option>
-                    <option>Bereavement</option>
-                    <option>Other</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="instructor">Course instructor:</label>
-                <select class="form-control" name="instructor">
-                    <option>Placeholder 1</option>
-                    <option>Placeholder 2</option>
-                    <option>Placeholder 3</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea class="form-control" name="description" rows="5" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="file">Supporting documents:</label>
-                <input type="file" class="form-control-file" name="file" aria-describedby="fileHelp" required>
-                <small id="fileHelp" class="form-text text-muted">Accepted file formats: doc, docx, pdf, jpg and jpeg. Any other files will not be accepted.</small>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+    <div class="container-fluid">
+        <div class="jumbotron">
+            <h1 class="display-5">Submit Request</h1>
+            <h3>Fill out the form below to submit your request:</h3>
+            <form action="{{ submitHandler }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="email">Email address:</label>
+                    <input type="email" class="form-control" name="email" value="{{user}}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" name="name" aria-describedby="nameHelp" value="{{name}}">
+                    <small id="nameHelp" class="form-text text-muted">Your email address or name may be in the above
+                        field due to the data available from Google. Please ensure your name is typed into the field.</small>
+                </div>
+                <div class="form-group">
+                    <label for="reason">Reason for mitigating circumstance:</label>
+                    <select class="form-control" name="reason">
+                        <option>Illness</option>
+                        <option>Family difficulties</option>
+                        <option>Bereavement</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="instructor">Course instructor:</label>
+                    <select class="form-control" name="instructor">
+                        <option>Placeholder 1</option>
+                        <option>Placeholder 2</option>
+                        <option>Placeholder 3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea class="form-control" name="description" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="file">Supporting documents:</label>
+                    <input type="file" class="form-control-file" name="file" aria-describedby="fileHelp" required>
+                    <small id="fileHelp" class="form-text text-muted">Accepted file formats: doc, docx, pdf, jpg and
+                        jpeg. Any other files will not be accepted.</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     </div>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
