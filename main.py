@@ -95,23 +95,23 @@ def dashboard():
 
 @app.route('/submit_request', methods=['GET', 'POST'])
 def submit_request():
-    upload = blobstore.create_upload_url('/submit', gs_bucket_name="mitcircs-rt")
+    upload = blobstore.create_upload_url('/submit_handler', gs_bucket_name="mitcircs-rt")
     return render_template('submit_request.html', user=session['userId'], name=session['username'], upload=upload)
 
-@app.route('/submit', methods=['POST'])
+@app.route('/submit_handler', methods=['POST'])
 def submit_handler():
     file = request.files['file']
     if file and extension_check(file.filename):
         header = file.headers['Content-Type']
-        blob_key = parse_options_header(header)[1]['blob-key']
-        blob_key = blob_key.replace("encoded_gs_file:","")
-        blobkey = BlobKey(blob_key)
+        blob_string = parse_options_header(header)[1]['blob-key']
+        blob_string = blob_string.replace("encoded_gs_file:","")
+        blob_key = BlobKey(blob_string)
         supportingDocument = SupportingDocument(
             user = session['userId'],
-            blob_key=blobkey
+            blob_key=blob_key
         )
         supportingDocument.put()
-        submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_key = blobkey)
+        submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_key = blob_key)
         if submit is not None:
             session['success'] = 1
     else:
