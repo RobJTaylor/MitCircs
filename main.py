@@ -78,6 +78,7 @@ def index():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+    query = Request.query(Request.email == session['userId'])
     if session['userId'] == None:
         session['error'] = 1
         return redirect(url_for('index'))
@@ -89,7 +90,7 @@ def dashboard():
         session['failure'] = None
         return render_template('dashboard.html', user=session['userId'], name=session['username'], failure=1)
 
-    return render_template('dashboard.html', user=session['userId'], name=session['username'])
+    return render_template('dashboard.html', user=session['userId'], name=session['username'], requests=query)
 
 @app.route('/submit_request', methods=['GET', 'POST'])
 def submit_request():

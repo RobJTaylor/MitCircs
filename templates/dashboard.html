@@ -78,7 +78,35 @@
             </div>
 
             <h1 class="display-5">Your requests:</h1>
-            <p>TODO: For loop to get requests and pop them into a swanky table =D</p>
+
+            {% if requests %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Reason</th>
+                        <th scope="col">Instructor</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Supporting File (PLACEHOLDER)</th>
+                        <th scope="col">Status (PLACEHOLDER)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in requests %}
+                    <tr>
+                        <td>{{ request.name }}</td>
+                        <td>{{ request.reason }}</td>
+                        <td>{{ request.instructor }}</td>
+                        <td>{{ request.description }}</td>
+                        <td>PLACEHOLDER</td>
+                        <td>PLACEHOLDER</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <h2>You have no requests</h2>
+            {% endif %}
         </div>
     </div>
 
