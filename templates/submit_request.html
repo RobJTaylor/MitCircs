@@ -31,12 +31,22 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/dashboard">Dashboard</a>
                 </li>
+                {% if account == "student" %}
                 <li class="nav-item">
                     <a class="nav-link" href="/submit_request">Submit Request</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/manage_requests">Manage Requests</a>
                 </li>
+                {% elif account == "instructor" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/manage_requests">Manage Requests</a>
+                </li>
+                {% elif account == "admin" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin_panel">Admin Panel</a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="/settings">Settings</a>
                 </li>

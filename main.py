@@ -79,25 +79,32 @@ def index():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    query = Request.query(Request.email == session['userId'])
+    requestQuery = Request.query(Request.email == session['userId'])
+    userQuery = User.query(User.name == session['userId'])
+
+    for user in userQuery:
+        session['account'] = user.account
+
     if session['userId'] == None:
         session['error'] = 1
         return redirect(url_for('index'))
 
     if session.get('success'):
+        success = session['success']
         session['success'] = None
-        return render_template('dashboard.html', user=session['userId'], name=session['username'], success=1)
+        return render_template('dashboard.html', user=session['userId'], name=session['username'], success=success)
     elif session.get('failure'):
+        failure = session['failure']
         session['failure'] = None
-        return render_template('dashboard.html', user=session['userId'], name=session['username'], failure=1)
+        return render_template('dashboard.html', user=session['userId'], name=session['username'], failure=failure)
 
-    return render_template('dashboard.html', user=session['userId'], name=session['username'], requests=query)
+    return render_template('dashboard.html', user=session['userId'], name=session['username'], requests=requestQuery, account = session['account'])
 
 @app.route('/submit_request', methods=['GET', 'POST'])
 def submit_request():
     submitHandler = blobstore.create_upload_url('/submit_handler', gs_bucket_name="mitcircs")
     query = User.query(User.account == "Instructor")
-    return render_template('submit_request.html', user=session['userId'], name=session['username'], submitHandler=submitHandler, instructors = query)
+    return render_template('submit_request.html', user=session['userId'], name=session['username'], submitHandler=submitHandler, instructors = query, account = session['account'])
 
 @app.route('/submit_handler', methods=['POST'])
 def submit_handler():
@@ -114,15 +121,29 @@ def submit_handler():
         supportingDocument.put()
         submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_key = blob_key)
         if submit is not None:
-            session['success'] = 1
+            session['success'] = "The form has been submitted!"
     else:
-        session['failure'] = 1
+        session['failure'] = "There was an error submitting the form. Please ensure all fields are filled correctly and the file extension is accepted."
     return render_template('submit_handler.html')
 
 @app.route('/manage_requests', methods=['GET', 'POST'])
 def manage_requests():
     query = Request.query(Request.email == session['userId'])
-    return render_template('manage_requests.html', requests = query)
+    return render_template('manage_requests.html', requests = query, account = session['account'])
+
+@app.route('/admin_panel', methods=['GET', 'POST'])
+def admin_panel():
+    users = User.query(User.name == session['userId'])
+    for user in users:
+        if user.account == "admin":
+            return render_template('admin_panel.html')
+        else:
+            session["failure"] = "You do not have admin rights. Please contact your system administrator if you believe this is incorrect."
+            return redirect(url_for('dashboard'))
+
+def signOut():
+    session.clear()
+    return render_template('sign-out.html')
 
 @app.route('/sign-out')
 def signOut():
