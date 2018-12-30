@@ -157,10 +157,17 @@ def admin_handler():
         #server.ehlo()
 
         msg = MIMEMultipart('alternative')
-        msg['From'] = formataddr((str(Header('mitcircs.robtaylor.info', 'utf-8')), 'mitcircs@robtaylor.info'))
+        msg['From'] = formataddr((str(Header('MitCircs', 'utf-8')), 'mitcircs@robtaylor.info'))
         msg['To'] = request.form['email']
+        msg['Subject'] = "MitCircs - Instructor Code"
 
-        messageContent = "Test"
+        messageContent = """<h1 style='text-align: center'>MitCircs Instructor Code</h1>
+        <p style='text-align: center'>Hello """ + request.form['email'] + """! 
+        <br> The following instructor code has been generated for you:
+        <br> <br> <b>PLACEHOLDER</b>
+        <br> <br> To use this code, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a>, click on Settings and enter the code
+        <br> <br> Thanks,
+        <br> The MitCircs Team </p>"""
         msg.attach(MIMEText(messageContent, 'html'))
 
         server.sendmail("mitcircs@robtaylor.info", request.form['email'], msg.as_string())
