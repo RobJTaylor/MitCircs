@@ -75,9 +75,10 @@
                     <label for="instructor">Course instructor:</label>
                     <select class="form-control" name="instructor">
                         {% if instructors %}
-                            {% for instructor in instructors %}
-                                <option>{{ instructor.name }}</option>
-                            {% endfor %}
+                        <option>Greggs</option>
+                        {% for instructor in instructors %}
+                        <option>{{ instructor.name }}</option>
+                        {% endfor %}
                         {% endif %}
                     </select>
                 </div>

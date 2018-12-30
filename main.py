@@ -46,6 +46,7 @@ class Request(ndb.Model):
     instructor = ndb.StringProperty()
     description = ndb.StringProperty()
     file_key = ndb.BlobKeyProperty()
+    status = ndb.StringProperty()
 
 class SupportingDocument(ndb.Model):
     user = ndb.StringProperty()
@@ -134,7 +135,7 @@ def registerUser(email, name):
     return user.put()
 
 def submit_form(email, name, reason, instructor, description, file_key):
-    request = Request(email = email, name = name, reason = reason, instructor = instructor, description = description, file_key = file_key)
+    request = Request(email = email, name = name, reason = reason, instructor = instructor, description = description, file_key = file_key, status = "Awaiting Review")
     return request.put()
 
 def extension_check(filename):

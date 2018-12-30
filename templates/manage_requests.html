@@ -60,7 +60,7 @@
                         <th scope="col">Instructor</th>
                         <th scope="col">Description</th>
                         <th scope="col">Supporting File (PLACEHOLDER)</th>
-                        <th scope="col">Status (PLACEHOLDER)</th>
+                        <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -71,7 +71,15 @@
                         <td>{{ request.instructor }}</td>
                         <td>{{ request.description }}</td>
                         <td>PLACEHOLDER</td>
-                        <td>PLACEHOLDER</td>
+                        {% if request.status == "Awaiting Review" %}
+                        <td><span class="badge badge-secondary">Awaiting Review</span></td>
+                        {% elif request.status == "More Info Required" %}
+                        <td><span class="badge badge-warning">More Info Required</span></td>
+                        {% elif request.status == "Rejected" %}
+                        <td><span class="badge badge-danger">Rejected</span></td>
+                        {% elif request.status == "Approved" %}
+                        <td><span class="badge badge-success">Approved</span></td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
