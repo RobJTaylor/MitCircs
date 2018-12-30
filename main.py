@@ -42,6 +42,7 @@ requests_toolbelt.adapters.appengine.monkeypatch()
 HTTP_REQUEST = google.auth.transport.requests.Request()
 
 class User(ndb.Model):
+    id = ndb.StringProperty()
     name = ndb.StringProperty()
     account = ndb.StringProperty()
 
@@ -86,7 +87,7 @@ def index():
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     requestQuery = Request.query(Request.email == session['userId'])
-    userQuery = User.query(User.name == session['userId'])
+    userQuery = User.query(User.id == session['userId'])
 
     for user in userQuery:
         session['account'] = user.account
@@ -139,7 +140,7 @@ def manage_requests():
 
 @app.route('/admin_panel', methods=['GET', 'POST'])
 def admin_panel():
-    users = User.query(User.name == session['userId'])
+    users = User.query(User.id == session['userId'])
     for user in users:
         if user.account == "admin":
             return render_template('admin_panel.html')
@@ -185,8 +186,12 @@ def signOut():
 
 #Resigtser user after logging in via Firebase
 def registerUser(email, name):
-    user = User(id = email, name = name, account = "student")
-    return user.put()
+    user = User.query(User.id == email).count()
+    if user >= 1:
+        return None
+    else:
+        user = User(id = email, name = name, account = "student")
+        return user.put()
 
 def submit_form(email, name, reason, instructor, description, file_key):
     request = Request(email = email, name = name, reason = reason, instructor = instructor, description = description, file_key = file_key, status = "Awaiting Review")
