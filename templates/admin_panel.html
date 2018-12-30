@@ -91,7 +91,7 @@
                     <p class="card-text">Enter an email address and click the send button to generate and send an
                         instructor code:</p>
                     <form action="/admin_handler" method="POST" enctype="multipart/form-data">
-                        <input type=hidden name=action value=send_instructor_code>
+                        <input type=hidden name="action" value="send_instructor_code">
                         <div class="form-group">
                             <label for="email">Email address:</label>
                             <input type="email" class="form-control" name="email" placeholder=rob@mitcircs.com>

@@ -26,6 +26,12 @@ import google.oauth2.id_token
 import requests_toolbelt.adapters.appengine
 from werkzeug.utils import secure_filename
 from werkzeug.http import parse_options_header
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.header import Header
+from email.utils import formataddr
+
 
 ALLOWED_EXTENSIONS = set (['doc', 'docx', 'pdf', 'jpg', 'jpeg'])
 
@@ -140,6 +146,26 @@ def admin_panel():
         else:
             session["failure"] = "You do not have admin rights. Please contact your system administrator if you believe this is incorrect."
             return redirect(url_for('dashboard'))
+
+@app.route('/admin_handler', methods=['GET', 'POST'])
+def admin_handler():
+    if request.form['action'] == "send_instructor_code":
+        server = smtplib.SMTP('mail.robtaylor.info', 25)
+        #server.starttls()
+        #server.ehlo()
+        server.login("mitcircs@robtaylor.info", "secure_password")
+        #server.ehlo()
+
+        msg = MIMEMultipart('alternative')
+        msg['From'] = formataddr((str(Header('mitcircs.robtaylor.info', 'utf-8')), 'mitcircs@robtaylor.info'))
+        msg['To'] = request.form['email']
+
+        messageContent = "Test"
+        msg.attach(MIMEText(messageContent, 'html'))
+
+        server.sendmail("mitcircs@robtaylor.info", request.form['email'], msg.as_string())
+        server.quit()
+        return redirect(url_for('dashboard'))
 
 def signOut():
     session.clear()
