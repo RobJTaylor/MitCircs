@@ -74,9 +74,11 @@
                 <div class="form-group">
                     <label for="instructor">Course instructor:</label>
                     <select class="form-control" name="instructor">
-                        <option>Placeholder 1</option>
-                        <option>Placeholder 2</option>
-                        <option>Placeholder 3</option>
+                        {% if instructors %}
+                            {% for instructor in instructors %}
+                                <option>{{ instructor.name }}</option>
+                            {% endfor %}
+                        {% endif %}
                     </select>
                 </div>
                 <div class="form-group">

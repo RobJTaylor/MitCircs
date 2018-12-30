@@ -95,7 +95,8 @@ def dashboard():
 @app.route('/submit_request', methods=['GET', 'POST'])
 def submit_request():
     submitHandler = blobstore.create_upload_url('/submit_handler', gs_bucket_name="mitcircs")
-    return render_template('submit_request.html', user=session['userId'], name=session['username'], submitHandler=submitHandler)
+    query = User.query(User.account == "Instructor")
+    return render_template('submit_request.html', user=session['userId'], name=session['username'], submitHandler=submitHandler, instructors = query)
 
 @app.route('/submit_handler', methods=['POST'])
 def submit_handler():
