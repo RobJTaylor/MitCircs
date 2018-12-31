@@ -59,6 +59,9 @@ class SupportingDocument(ndb.Model):
     user = ndb.StringProperty()
     blob_key = ndb.BlobKeyProperty()
 
+class InstructorCode(ndb.Model):
+    email = ndb.StringProperty()
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     session['userId'] = None
@@ -151,29 +154,35 @@ def admin_panel():
 @app.route('/admin_handler', methods=['GET', 'POST'])
 def admin_handler():
     if request.form['action'] == "send_instructor_code":
+        userIsInstructor = InstructorCode.query(InstructorCode.email == request.form['email']).count()
+        if userIsInstructor == 0:
+            msg = MIMEMultipart('alternative')
+            msg['From'] = formataddr((str(Header('MitCircs', 'utf-8')), 'mitcircs@robtaylor.info'))
+            msg['To'] = request.form['email']
+            msg['Subject'] = "MitCircs - Instructor Code"
 
-        msg = MIMEMultipart('alternative')
-        msg['From'] = formataddr((str(Header('MitCircs', 'utf-8')), 'mitcircs@robtaylor.info'))
-        msg['To'] = request.form['email']
-        msg['Subject'] = "MitCircs - Instructor Code"
+            instructorCode = InstructorCode(email = None).put()
+            instructorCodeKey = instructorCode.id()
 
-        messageContent = """<h1 style='text-align: center'>MitCircs Instructor Code</h1>
-        <p style='text-align: center'>Hello """ + request.form['email'] + """! 
-        <br> The following instructor code has been generated for you:
-        <br> <br> <b>PLACEHOLDER</b>
-        <br> <br> To use this code, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a>, click on Settings and enter the code
-        <br> <br> Thanks,
-        <br> The MitCircs Team </p>"""
-        msg.attach(MIMEText(messageContent, 'html'))
+            messageContent = """<h1 style='text-align: center'>MitCircs Instructor Code</h1>
+            <p style='text-align: center'>Hello """ + request.form['email'] + """! 
+            <br> The following instructor code has been generated for you:
+            <br> <br> <b>""" + str(instructorCodeKey) + """</b>
+            <br> <br> To use this code, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a>, click on Settings and enter the code under the 'Instructor Code' section.
+            <br> <br> Thanks,
+            <br> The MitCircs Team </p>"""
+            msg.attach(MIMEText(messageContent, 'html'))
 
-        try:
-            server = smtplib.SMTP('mail.robtaylor.info', 25)
-            server.login("mitcircs@robtaylor.info", "secure_password")
-            server.sendmail("mitcircs@robtaylor.info", request.form['email'], msg.as_string())
-            server.quit()
-            session['success'] = "Email sent!"
-        except:
-            session['failure'] = "There was an error sending the email. This could be due to a server error. Please try again in a few minutes."
+            try:
+                server = smtplib.SMTP('mail.robtaylor.info', 25)
+                server.login("mitcircs@robtaylor.info", "secure_password")
+                server.sendmail("mitcircs@robtaylor.info", request.form['email'], msg.as_string())
+                server.quit()
+                session['success'] = "Email sent!"
+            except:
+                session['failure'] = "There was an error sending the email. This could be due to a server error. Please try again in a few minutes."
+        else:
+            session['failure'] = request.form['email'] + " has already accepted an instructor code - an email has not been sent."    
         
         return redirect(url_for('dashboard'))
 
