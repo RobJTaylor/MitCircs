@@ -141,6 +141,29 @@ def manage_requests():
     query = Request.query(Request.email == session['userId'])
     return render_template('manage_requests.html', requests = query, account = session['account'])
 
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    return render_template('settings.html')
+
+@app.route('/instructor_handler', methods=['GET', 'POST'])
+def instructor_handler():
+    if request.form['action'] == "activate_instructor_code":
+        key = request.form['instructor_key']
+        instructorCodeKey = ndb.Key('InstructorCode', key)
+        instructorCode = instructorCodeKey.get()
+        instructorCode.email = session['userId']
+        instructorCode.put()
+        #instructorCodes = InstructorCode.query(key == key)
+        #for instructorCode in instructorCodes:
+        #instructorCode.email = session['userId']
+        #instructorCode.put()
+
+         
+
+
+    return None
+
+
 @app.route('/admin_panel', methods=['GET', 'POST'])
 def admin_panel():
     users = User.query(User.id == session['userId'])
