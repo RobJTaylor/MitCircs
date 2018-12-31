@@ -151,11 +151,6 @@ def admin_panel():
 @app.route('/admin_handler', methods=['GET', 'POST'])
 def admin_handler():
     if request.form['action'] == "send_instructor_code":
-        server = smtplib.SMTP('mail.robtaylor.info', 25)
-        #server.starttls()
-        #server.ehlo()
-        server.login("mitcircs@robtaylor.info", "secure_password")
-        #server.ehlo()
 
         msg = MIMEMultipart('alternative')
         msg['From'] = formataddr((str(Header('MitCircs', 'utf-8')), 'mitcircs@robtaylor.info'))
@@ -171,8 +166,15 @@ def admin_handler():
         <br> The MitCircs Team </p>"""
         msg.attach(MIMEText(messageContent, 'html'))
 
-        server.sendmail("mitcircs@robtaylor.info", request.form['email'], msg.as_string())
-        server.quit()
+        try:
+            server = smtplib.SMTP('mail.robtaylor.info', 25)
+            server.login("mitcircs@robtaylor.info", "secure_password")
+            server.sendmail("mitcircs@robtaylor.info", request.form['email'], msg.as_string())
+            server.quit()
+            session['success'] = "Email sent!"
+        except:
+            session['failure'] = "There was an error sending the email. This could be due to a server error. Please try again in a few minutes."
+        
         return redirect(url_for('dashboard'))
 
 def signOut():
