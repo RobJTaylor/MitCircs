@@ -101,6 +101,25 @@
                 </div>
             </div>
 
+            <div class="card">
+                <div class="card-header">
+                    Admin Codes
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Send Admin Code</h5>
+                    <p class="card-text">Enter an email address and click the send button to generate and send an
+                        admin code:</p>
+                    <form action="/admin_handler" method="POST" enctype="multipart/form-data">
+                        <input type=hidden name="action" value="send_admin_code">
+                        <div class="form-group">
+                            <label for="email">Email address:</label>
+                            <input type="email" class="form-control" name="email" placeholder=rob@mitcircs.com>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Code</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
 
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"

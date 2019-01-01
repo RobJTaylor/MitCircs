@@ -89,11 +89,30 @@
                     <h5 class="card-title">Activate Instructor Code</h5>
                     <p class="card-text">If you have been sent an instructor code, enter it below and click "Activate
                         Code":</p>
-                    <form action="/instructor_handler" method="POST" enctype="multipart/form-data">
+                    <form action="/settings_handler" method="POST" enctype="multipart/form-data">
                         <input type=hidden name="action" value="activate_instructor_code">
                         <div class="form-group">
                             <label for="instructor_key">Instructor Code:</label>
                             <input type="text" class="form-control" name="instructor_key" placeholder="123456789">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Activate Code</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Admin Code
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Activate Admin Code</h5>
+                    <p class="card-text">If you have been sent an admin code, enter it below and click "Activate
+                        Code":</p>
+                    <form action="/settings_handler" method="POST" enctype="multipart/form-data">
+                        <input type=hidden name="action" value="activate_admin_code">
+                        <div class="form-group">
+                            <label for="instructor_key">Admin Code:</label>
+                            <input type="text" class="form-control" name="admin_key" placeholder="123456789">
                         </div>
                         <button type="submit" class="btn btn-primary">Activate Code</button>
                     </form>
