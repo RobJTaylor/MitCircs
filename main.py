@@ -26,12 +26,7 @@ import google.oauth2.id_token
 import requests_toolbelt.adapters.appengine
 from werkzeug.utils import secure_filename
 from werkzeug.http import parse_options_header
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.header import Header
-from email.utils import formataddr
-
+from google.appengine.api import mail
 
 ALLOWED_EXTENSIONS = set (['doc', 'docx', 'pdf', 'jpg', 'jpeg'])
 
@@ -179,28 +174,22 @@ def admin_handler():
     if request.form['action'] == "send_instructor_code":
         userIsInstructor = InstructorCode.query(InstructorCode.email == request.form['email']).count()
         if userIsInstructor == 0:
-            msg = MIMEMultipart('alternative')
-            msg['From'] = formataddr((str(Header('MitCircs', 'utf-8')), 'mitcircs@robtaylor.info'))
-            msg['To'] = request.form['email']
-            msg['Subject'] = "MitCircs - Instructor Code"
+            message = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - Instructor Code")
+            message.to = request.form['email']
 
             instructorCode = InstructorCode(email = None).put()
             instructorCodeKey = instructorCode.id()
 
-            messageContent = """<h1 style='text-align: center'>MitCircs Instructor Code</h1>
+            message.html = """<h1 style='text-align: center'>MitCircs Instructor Code</h1>
             <p style='text-align: center'>Hello """ + request.form['email'] + """! 
             <br> The following instructor code has been generated for you:
             <br> <br> <b>""" + str(instructorCodeKey) + """</b>
             <br> <br> To use this code, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a>, click on Settings and enter the code under the 'Instructor Code' section.
             <br> <br> Thanks,
             <br> The MitCircs Team </p>"""
-            msg.attach(MIMEText(messageContent, 'html'))
 
             try:
-                server = smtplib.SMTP('mail.robtaylor.info', 25)
-                server.login("mitcircs@robtaylor.info", "secure_password")
-                server.sendmail("mitcircs@robtaylor.info", request.form['email'], msg.as_string())
-                server.quit()
+                message.send()
                 session['success'] = "Email sent!"
             except:
                 session['failure'] = "There was an error sending the email. This could be due to a server error. Please try again in a few minutes."
