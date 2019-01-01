@@ -94,9 +94,21 @@
                         <input type=hidden name="action" value="send_instructor_code">
                         <div class="form-group">
                             <label for="email">Email address:</label>
-                            <input type="email" class="form-control" name="email" placeholder=rob@mitcircs.com>
+                            <input type="email" class="form-control" name="email">
                         </div>
                         <button type="submit" class="btn btn-primary">Send Code</button>
+                    </form>
+
+                    <h5 class="card-title">Revoke Instructor Code</h5>
+                    <p class="card-text">Enter an email address and click the revoke button to revoke an instructor's
+                        rights</p>
+                    <form action="/admin_handler" method="POST" enctype="multipart/form-data">
+                        <input type=hidden name="action" value="revoke_instructor_code">
+                        <div class="form-group">
+                            <label for="email">Email address:</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Revoke Code</button>
                     </form>
                 </div>
             </div>

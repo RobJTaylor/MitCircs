@@ -241,6 +241,21 @@ def admin_handler():
             session['failure'] = "There was an error sending the email. This could be due to a server error. Please try again in a few minutes."
             return redirect(url_for('dashboard'))
 
+    elif request.form['action'] == "revoke_instructor_code":
+        email = request.form['email']
+        insCode = InstructorCode.query().filter(ndb.StringProperty("user_id") == email).get()
+        if insCode == None:
+            session['failure'] = "No email linked to an instructor code could be found"
+        else:
+            insCode.key.delete()
+
+        user = User.query().filter(ndb.StringProperty("id") == email).get()
+        user.account = "student"
+        user.put()
+
+        session['success'] = "Instructor code revoked! User has been set to account type student"
+        return redirect(url_for('dashboard'))
+
 
 def signOut():
     session.clear()
