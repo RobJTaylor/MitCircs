@@ -246,6 +246,7 @@ def admin_handler():
         insCode = InstructorCode.query().filter(ndb.StringProperty("user_id") == email).get()
         if insCode == None:
             session['failure'] = "No email linked to an instructor code could be found"
+            return redirect(url_for('dashboard'))
         else:
             insCode.key.delete()
 
@@ -255,7 +256,22 @@ def admin_handler():
 
         session['success'] = "Instructor code revoked! User has been set to account type student"
         return redirect(url_for('dashboard'))
+    
+    elif request.form['action'] == "revoke_admin_code":
+        email = request.form['email']
+        admCode = AdminCode.query().filter(ndb.StringProperty("user_id") == email).get()
+        if admCode == None:
+            session['failure'] = "No email linked to an admin code could be found"
+            return redirect(url_for('dashboard'))
+        else:
+            admCode.key.delete()
 
+        user = User.query().filter(ndb.StringProperty("id") == email).get()
+        user.account = "student"
+        user.put()
+
+        session['success'] = "Admin code revoked! User has been set to account type student"
+        return redirect(url_for('dashboard'))
 
 def signOut():
     session.clear()
