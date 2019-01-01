@@ -27,6 +27,7 @@ import requests_toolbelt.adapters.appengine
 from werkzeug.utils import secure_filename
 from werkzeug.http import parse_options_header
 from google.appengine.api import mail
+import uuid
 
 ALLOWED_EXTENSIONS = set (['doc', 'docx', 'pdf', 'jpg', 'jpeg'])
 
@@ -55,7 +56,8 @@ class SupportingDocument(ndb.Model):
     blob_key = ndb.BlobKeyProperty()
 
 class InstructorCode(ndb.Model):
-    email = ndb.StringProperty()
+    user_id = ndb.StringProperty()
+    uuid = ndb.StringProperty()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -143,20 +145,19 @@ def settings():
 @app.route('/instructor_handler', methods=['GET', 'POST'])
 def instructor_handler():
     if request.form['action'] == "activate_instructor_code":
-        key = request.form['instructor_key']
-        instructorCodeKey = ndb.Key('InstructorCode', key)
-        instructorCode = instructorCodeKey.get()
-        instructorCode.email = session['userId']
-        instructorCode.put()
-        #instructorCodes = InstructorCode.query(key == key)
-        #for instructorCode in instructorCodes:
-        #instructorCode.email = session['userId']
-        #instructorCode.put()
+        code = request.form['instructor_key']
+        insCode = InstructorCode.query().filter(ndb.StringProperty("uuid") == code).get()
+        if insCode == None:
+            session['failure'] = "That code does not appear to be valid. Please ensure you typed it correctly."
+        else:
+            insCode.user_id = session['userId']
+            insCode.put()
 
-         
-
-
-    return None
+        user = User.query().filter(ndb.StringProperty("id") == session['userId']).get()
+        user.account = "instructor"
+        user.put()
+        session['success'] = "Your account has been updated to an instructor account"
+    return redirect(url_for('dashboard'))
 
 
 @app.route('/admin_panel', methods=['GET', 'POST'])
@@ -172,18 +173,19 @@ def admin_panel():
 @app.route('/admin_handler', methods=['GET', 'POST'])
 def admin_handler():
     if request.form['action'] == "send_instructor_code":
-        userIsInstructor = InstructorCode.query(InstructorCode.email == request.form['email']).count()
+        userIsInstructor = InstructorCode.query(InstructorCode.user_id == request.form['email']).count()
         if userIsInstructor == 0:
             message = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - Instructor Code")
             message.to = request.form['email']
 
-            instructorCode = InstructorCode(email = None).put()
-            instructorCodeKey = instructorCode.id()
+            generatedCode = str(uuid.uuid4())
+
+            instructorCode = InstructorCode(user_id = None, uuid = generatedCode).put()
 
             message.html = """<h1 style='text-align: center'>MitCircs Instructor Code</h1>
             <p style='text-align: center'>Hello """ + request.form['email'] + """! 
             <br> The following instructor code has been generated for you:
-            <br> <br> <b>""" + str(instructorCodeKey) + """</b>
+            <br> <br> <b>""" + str(generatedCode) + """</b>
             <br> <br> To use this code, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a>, click on Settings and enter the code under the 'Instructor Code' section.
             <br> <br> Thanks,
             <br> The MitCircs Team </p>"""
