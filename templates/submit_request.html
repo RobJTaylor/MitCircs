@@ -84,10 +84,10 @@
                 <div class="form-group">
                     <label for="instructor">Course instructor:</label>
                     <select class="form-control" name="instructor">
+                        <option>i7437871@bournemouth.ac.uk</option>
                         {% if instructors %}
-                        <option>Greggs</option>
                         {% for instructor in instructors %}
-                        <option>{{ instructor.name }}</option>
+                        <option>{{ instructor.id }}</option>
                         {% endfor %}
                         {% endif %}
                     </select>

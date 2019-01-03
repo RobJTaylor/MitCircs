@@ -114,7 +114,11 @@ def dashboard():
 @app.route('/submit_request', methods=['GET', 'POST'])
 def submit_request():
     submitHandler = blobstore.create_upload_url('/submit_handler', gs_bucket_name="mitcircs")
-    query = User.query(User.account == "Instructor")
+    query = User.query(User.account == "instructor")
+    for instructor in query:
+        if instructor.id == "":
+            return render_template('submit_request.html', user=session['userId'], name=session['username'], submitHandler=submitHandler, instructors = None, account = session['account'])
+
     return render_template('submit_request.html', user=session['userId'], name=session['username'], submitHandler=submitHandler, instructors = query, account = session['account'])
 
 @app.route('/submit_handler', methods=['POST'])
@@ -131,10 +135,41 @@ def submit_handler():
         )
         supportingDocument.put()
         submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_key = blob_key)
+
+        #Instructor Email
+        instructorMessage = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - New Submission")
+        instructorMessage.to = request.form['instructor']
+        instructorMessage.html = """<h1 style='text-align: center'>MitCircs - New Request</h1>
+        <p style='text-align: center'>Hello """ + request.form['instructor'] + """! 
+        <br> You have recieved a new request from:
+        <br> <br> <b>""" + request.form['email'] + """</b>
+        <br> <br> To view this submission, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a> and click on "manage requests".
+        <br> <br> Thanks,
+        <br> The MitCircs Team </p>"""
+
+        #Email Reciept
+        studentMessage = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - Submission Reciept")
+        studentMessage.to = request.form['email']
+        studentMessage.html = """<h1 style='text-align: center'>MitCircs - Submission Reciept</h1>
+        <p style='text-align: center'>Hello """ + request.form['email'] + """! 
+        <br> This email is your reciept for your request to:
+        <br> <br> <b>""" + request.form['instructor'] + """</b>
+        <br> <br> To view this submission, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a> and click on "manage requests".
+        <br> <br> Thanks,
+        <br> The MitCircs Team </p>"""
+
+        try:
+            instructorMessage.send()
+            studentMessage.send()
+        except:
+            session['failure'] = "Failed to send email to instructor or student. Please check the submission in Manage Requests"
+            return render_template('submit_handler.html')
+
         if submit is not None:
             session['success'] = "The form has been submitted!"
     else:
         session['failure'] = "There was an error submitting the form. Please ensure all fields are filled correctly and the file extension is accepted."
+    
     return render_template('submit_handler.html')
 
 @app.route('/manage_requests', methods=['GET', 'POST'])
