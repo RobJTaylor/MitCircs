@@ -319,6 +319,64 @@ def signOut():
     session.clear()
     return render_template('sign-out.html')
 
+@app.route('/update_request', methods=['GET', 'POST'])
+def updateRequest():
+    if request.form['action'] == "accept_request":
+        userRequest = Request.query().filter(ndb.StringProperty("uuid") == request.form['request_id']).get()
+        userRequest.status = "Approved"
+        userRequest.put()
+
+        message = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - Request Accepted")
+        message.to = userRequest.email
+
+        message.html = """<h1 style='text-align: center'>MitCircs Request Accepted</h1>
+        <p style='text-align: center'>Hello """ + userRequest.email + """! 
+        <br> <br> Your request has been approved!
+        <br> <br> Request ID: <b>
+        <br>""" + userRequest.uuid + """</b>
+        <br> <br> To view this request, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a> and click on manage requests.
+        <br> <br> Thanks,
+        <br> The MitCircs Team </p>"""
+
+        try:
+            message.send()
+        except:
+            session['failure'] = "Error sending student notification email. Please check request status in manage requests."
+            return redirect(url_for('dashboard'))
+        
+        session['success'] = "Request accepted! Student has been sent a notification email."
+        return redirect(url_for('dashboard'))
+    elif request.form['action'] == "decline_request":
+        userRequest = Request.query().filter(ndb.StringProperty("uuid") == request.form['request_id']).get()
+        userRequest.status = "Declined"
+        userRequest.put()
+
+        message = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - Request Declined")
+        message.to = userRequest.email
+
+        message.html = """<h1 style='text-align: center'>MitCircs Request Accepted</h1>
+        <p style='text-align: center'>Hello """ + userRequest.email + """! 
+        <br> <br> Your request has been declined.
+        <br> <br> Request ID: <b>
+        <br>""" + userRequest.uuid + """</b>
+        <br> <br> Contact your course instructor for further information on this decision.
+        <br> To view this request, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a> and click on manage requests.
+        <br> <br> Thanks,
+        <br> The MitCircs Team </p>"""
+
+        try:
+            message.send()
+        except:
+            session['failure'] = "Error sending student notification email. Please check request status in manage requests."
+            return redirect(url_for('dashboard'))
+    
+        session['success'] = "Request declined. Student has been sent a notification email."
+        return redirect(url_for('dashboard'))
+    elif request.form['action'] == "request_info":
+        #Logic here
+
+        session['success'] = "Update requested. Student has been sent a notification email."
+        return redirect(url_for('dashboard'))
 @app.route('/sign-out')
 def signOut():
     session.clear()
