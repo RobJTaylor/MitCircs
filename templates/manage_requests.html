@@ -87,7 +87,7 @@
                         <td>PLACEHOLDER</td>
                         {% if request.status == "Awaiting Review" %}
                         <td><span class="badge badge-secondary">Awaiting Review</span></td>
-                        {% elif request.status == "More Info Required" %}
+                        {% elif request.status == "Info Required" %}
                         <td><span class="badge badge-warning">More Info Required</span></td>
                         {% elif request.status == "Declined" %}
                         <td><span class="badge badge-danger">Declined</span></td>
@@ -105,8 +105,7 @@
                             <input type=hidden name="request_id" value={{ request.uuid }}>
                             <td><button type="submit" class="btn btn-danger">Decline Request</button></td>
                         </form>
-                        <form action="/update_request" method="POST" enctype="multipart/form-data">
-                            <input type=hidden name="action" value="request_info">
+                        <form action="/request_info" method="POST" enctype="multipart/form-data">
                             <input type=hidden name="request_id" value={{ request.uuid }}>
                             <td><button type="submit" class="btn btn-warning">Request Info</button></td>
                         </form>

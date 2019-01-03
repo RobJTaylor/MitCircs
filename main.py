@@ -51,6 +51,7 @@ class Request(ndb.Model):
     file_key = ndb.BlobKeyProperty()
     status = ndb.StringProperty()
     uuid = ndb.StringProperty()
+    requestedInfo = ndb.StringProperty()
 
 class SupportingDocument(ndb.Model):
     user = ndb.StringProperty()
@@ -373,10 +374,39 @@ def updateRequest():
         session['success'] = "Request declined. Student has been sent a notification email."
         return redirect(url_for('dashboard'))
     elif request.form['action'] == "request_info":
-        #Logic here
+        userRequest = Request.query().filter(ndb.StringProperty("uuid") == request.form['request_id']).get()
+        userRequest.status = "Info Required"
+        userRequest.requestedInfo = request.form['infoRequired']
+        userRequest.put()
+
+        message = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - Info Needed")
+        message.to = userRequest.email
+
+        message.html = """<h1 style='text-align: center'>MitCircs Info Needed</h1>
+        <p style='text-align: center'>Hello """ + userRequest.email + """! 
+        <br> <br> Your instructor has requested more information for your request.
+        <br> <br> Request ID: <b>
+        <br>""" + userRequest.uuid + """</b>
+        <br> <br> Instructor comments:
+        <br>""" + request.form['infoRequired'] + """
+        <br> <br> To view this request, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a> and click on manage requests.
+        <br> <br> Thanks,
+        <br> The MitCircs Team </p>"""
+
+        try:
+            message.send()
+        except:
+            session['failure'] = "Error sending student notification email. Please check request status in manage requests."
+            return redirect(url_for('dashboard'))
 
         session['success'] = "Update requested. Student has been sent a notification email."
         return redirect(url_for('dashboard'))
+
+@app.route('/request_info', methods=['GET', 'POST'])
+def requestInfo():
+    userRequest = Request.query().filter(ndb.StringProperty("uuid") == request.form['request_id']).get()
+    return render_template('request_info.html', userRequest = userRequest)
+
 @app.route('/sign-out')
 def signOut():
     session.clear()
