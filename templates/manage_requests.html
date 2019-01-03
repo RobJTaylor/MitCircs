@@ -60,22 +60,27 @@
     <div class="container-fluid">
         <div class="jumbotron">
             <h1 class="display-5">Manage Requests</h1>
-
             {% if requests %}
             <table class="table">
                 <thead>
                     <tr>
+                        <th scope="col">ID</th>
                         <th scope="col">Name</th>
                         <th scope="col">Reason</th>
                         <th scope="col">Instructor</th>
                         <th scope="col">Description</th>
                         <th scope="col">Supporting File (PLACEHOLDER)</th>
                         <th scope="col">Status</th>
+                        {% if account == "instructor" %}
+                        <th scope="col">Approve</th>
+                        <th scope="col">Decline</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
                     {% for request in requests %}
                     <tr>
+                        <td>{{ request.uuid }}</td>
                         <td>{{ request.name }}</td>
                         <td>{{ request.reason }}</td>
                         <td>{{ request.instructor }}</td>
@@ -90,6 +95,7 @@
                         {% elif request.status == "Approved" %}
                         <td><span class="badge badge-success">Approved</span></td>
                         {% endif %}
+
                     </tr>
                     {% endfor %}
                 </tbody>

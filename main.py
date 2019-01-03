@@ -50,6 +50,7 @@ class Request(ndb.Model):
     description = ndb.StringProperty()
     file_key = ndb.BlobKeyProperty()
     status = ndb.StringProperty()
+    uuid = ndb.StringProperty()
 
 class SupportingDocument(ndb.Model):
     user = ndb.StringProperty()
@@ -134,15 +135,19 @@ def submit_handler():
             blob_key=blob_key
         )
         supportingDocument.put()
-        submit = submit_form(email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_key = blob_key)
+
+        requestId = str(uuid.uuid4())
+        submit = submit_form(id =requestId, email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_key = blob_key)
 
         #Instructor Email
         instructorMessage = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - New Submission")
         instructorMessage.to = request.form['instructor']
         instructorMessage.html = """<h1 style='text-align: center'>MitCircs - New Request</h1>
         <p style='text-align: center'>Hello """ + request.form['instructor'] + """! 
-        <br> You have recieved a new request from:
-        <br> <br> <b>""" + request.form['email'] + """</b>
+        <br> <br> You have recieved a new request from:
+        <br> <b>""" + request.form['email'] + """</b>
+        <br> <br> Request ID: 
+        <br> <b>""" + requestId + """</b>
         <br> <br> To view this submission, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a> and click on "manage requests".
         <br> <br> Thanks,
         <br> The MitCircs Team </p>"""
@@ -152,8 +157,10 @@ def submit_handler():
         studentMessage.to = request.form['email']
         studentMessage.html = """<h1 style='text-align: center'>MitCircs - Submission Reciept</h1>
         <p style='text-align: center'>Hello """ + request.form['email'] + """! 
-        <br> This email is your reciept for your request to:
-        <br> <br> <b>""" + request.form['instructor'] + """</b>
+        <br> <br> This email is your reciept for your request to:
+        <br> <b>""" + request.form['instructor'] + """</b>
+        <br> <br> Request ID: 
+        <br> <b>""" + requestId + """</b>
         <br> <br> To view this submission, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a> and click on "manage requests".
         <br> <br> Thanks,
         <br> The MitCircs Team </p>"""
@@ -326,8 +333,8 @@ def registerUser(email, name):
         user = User(id = email, name = name, account = "student")
         return user.put()
 
-def submit_form(email, name, reason, instructor, description, file_key):
-    request = Request(email = email, name = name, reason = reason, instructor = instructor, description = description, file_key = file_key, status = "Awaiting Review")
+def submit_form(id, email, name, reason, instructor, description, file_key):
+    request = Request(uuid = id, email = email, name = name, reason = reason, instructor = instructor, description = description, file_key = file_key, status = "Awaiting Review")
     return request.put()
 
 def extension_check(filename):
