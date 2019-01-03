@@ -104,11 +104,11 @@ def dashboard():
     if session.get('success'):
         success = session['success']
         session['success'] = None
-        return render_template('dashboard.html', user=session['userId'], name=session['username'], success=success)
+        return render_template('dashboard.html', user=session['userId'], name=session['username'], success=success, account = session['account'])
     elif session.get('failure'):
         failure = session['failure']
         session['failure'] = None
-        return render_template('dashboard.html', user=session['userId'], name=session['username'], failure=failure)
+        return render_template('dashboard.html', user=session['userId'], name=session['username'], failure=failure, account = session['account'])
 
     return render_template('dashboard.html', user=session['userId'], name=session['username'], requests=requestQuery, account = session['account'])
 

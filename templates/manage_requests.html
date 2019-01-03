@@ -72,8 +72,7 @@
                         <th scope="col">Supporting File (PLACEHOLDER)</th>
                         <th scope="col">Status</th>
                         {% if account == "instructor" %}
-                        <th scope="col">Approve</th>
-                        <th scope="col">Decline</th>
+                        <th scope="col">Request Options</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -95,7 +94,23 @@
                         {% elif request.status == "Approved" %}
                         <td><span class="badge badge-success">Approved</span></td>
                         {% endif %}
-
+                        {% if account == "instructor" %}
+                        <form action="/update_request" method="POST" enctype="multipart/form-data">
+                            <input type=hidden name="action" value="accept_request">
+                            <input type=hidden name="request_id" value={{ request.uuid }}>
+                            <td><button type="submit" class="btn btn-success">Accept Request</button></td>
+                        </form>
+                        <form action="/update_request" method="POST" enctype="multipart/form-data">
+                            <input type=hidden name="action" value="decline_request">
+                            <input type=hidden name="request_id" value={{ request.uuid }}>
+                            <td><button type="submit" class="btn btn-danger">Decline Request</button></td>
+                        </form>
+                        <form action="/update_request" method="POST" enctype="multipart/form-data">
+                            <input type=hidden name="action" value="request_info">
+                            <input type=hidden name="request_id" value={{ request.uuid }}>
+                            <td><button type="submit" class="btn btn-warning">Request Info</button></td>
+                        </form>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
