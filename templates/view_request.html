@@ -1,0 +1,99 @@
+<html>
+
+<head>
+    <title>MitCircs</title>
+    <!-- Page Specific CSS -->
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!-- Ajax Import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Importing Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <a class="navbar-brand" href="/dashboard">MitCircs</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarToggler">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </li>
+                {% if account == "student" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/submit_request">Submit Request</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manage_requests">Manage Requests</a>
+                </li>
+                {% elif account == "instructor" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/manage_requests">Manage Requests</a>
+                </li>
+                {% elif account == "admin" %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin_panel">Admin Panel</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/settings">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a id="signOut" class="nav-link sign-out" href="#">Sign Out</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="jumbotron">
+            <h1 class="display-5">Request Info</h1>
+            <h5>Student email:</h5>
+            <p>{{ userRequest.email }}</p>
+            <h5>Request ID:</h5>
+            <p>{{ userRequest.uuid }}</p>
+            <h5>Reason:</h5>
+            <p>{{ userRequest.reason }}</p>
+            <h5>Instructor:</h5>
+            <p>{{ userRequest.instructor }}</p>
+            <h5>Description:</h5>
+            <p>{{ userRequest.description }}</p>
+            <h5>Status:</h5>
+            <p>{{ userRequest.status }}</p>
+            {% if userRequest.requestedInfo %}
+            <h5>Information requested:</h5>
+            <p>{{ userRequest.requestedInfo }}</p>
+            {% endif %}
+
+            {% if action == "update_request" %}
+            <form action="/update_request" method="POST" enctype="multipart/form-data">
+                <input type=hidden name="action" value="update_info">
+                <input type=hidden name="request_id" value={{ userRequest.uuid }}>
+                <div class="form-group">
+                    <h5>Your response:</h5>
+                    <textarea class="form-control" name="studentResponse" rows="5"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

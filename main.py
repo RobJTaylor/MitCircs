@@ -52,6 +52,7 @@ class Request(ndb.Model):
     status = ndb.StringProperty()
     uuid = ndb.StringProperty()
     requestedInfo = ndb.StringProperty()
+    studentResponse = ndb.StringProperty()
 
 class SupportingDocument(ndb.Model):
     user = ndb.StringProperty()
@@ -182,7 +183,11 @@ def submit_handler():
 
 @app.route('/manage_requests', methods=['GET', 'POST'])
 def manage_requests():
-    query = Request.query(Request.email == session['userId'])
+    if session['account'] == "student":
+        query = Request.query(Request.email == session['userId'])
+    elif session['account'] == "instructor":
+        query = Request.query(Request.instructor == session['userId'])
+
     return render_template('manage_requests.html', requests = query, account = session['account'])
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -401,11 +406,51 @@ def updateRequest():
 
         session['success'] = "Update requested. Student has been sent a notification email."
         return redirect(url_for('dashboard'))
+    elif request.form['action'] == "update_info":
+        userRequest = Request.query().filter(ndb.StringProperty("uuid") == request.form['request_id']).get()
+        userRequest.studentResponse = request.form['studentResponse']
+        userRequest.status = "Awaiting Review"
+        userRequest.put()
+
+        message = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - Student Response")
+        message.to = userRequest.instructor
+
+        message.html = """<h1 style='text-align: center'>MitCircs Student Response</h1>
+        <p style='text-align: center'>Hello """ + userRequest.instructor + """! 
+        <br> <br> Your student has provided more information on their request.
+        <br> <br> Request ID: <b>
+        <br>""" + userRequest.uuid + """</b>
+        <br> <br> Student comments:
+        <br>""" + request.form['studentResponse'] + """
+        <br> <br> To view this request, please login to <a href='https://mitcircs.robtaylor.info'>MitCircs</a> and click on manage requests.
+        <br> <br> Thanks,
+        <br> The MitCircs Team </p>"""
+
+        try:
+            message.send()
+        except:
+            session['failure'] = "Error sending instructor notification email. Please check request status in manage requests."
+            return redirect(url_for('dashboard'))
+
+        session['success'] = "Information updated. Instructor notified."
+        return redirect(url_for('dashboard'))
 
 @app.route('/request_info', methods=['GET', 'POST'])
 def requestInfo():
     userRequest = Request.query().filter(ndb.StringProperty("uuid") == request.form['request_id']).get()
     return render_template('request_info.html', userRequest = userRequest)
+
+@app.route('/view_request', methods=['GET', 'POST'])
+def viewRequest():
+    userRequest = Request.query().filter(ndb.StringProperty("uuid") == request.form['request_id']).get()
+
+    if request.form['action'] != None:
+        action = request.form['action']
+    else:
+        action = ""
+
+    return render_template('view_request.html', userRequest = userRequest, action = action)
+
 
 @app.route('/sign-out')
 def signOut():

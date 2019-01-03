@@ -71,9 +71,7 @@
                         <th scope="col">Description</th>
                         <th scope="col">Supporting File (PLACEHOLDER)</th>
                         <th scope="col">Status</th>
-                        {% if account == "instructor" %}
                         <th scope="col">Request Options</th>
-                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -94,7 +92,15 @@
                         {% elif request.status == "Approved" %}
                         <td><span class="badge badge-success">Approved</span></td>
                         {% endif %}
-                        {% if account == "instructor" %}
+                        {% if account == "student" %}
+                        {% if request.status == "Info Required" %}
+                        <form action="/view_request" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="action" value="update_request">
+                            <input type=hidden name="request_id" value={{ request.uuid }}>
+                            <td><button type="submit" class="btn btn-warning">Provide Requested Info</button></td>
+                        </form>
+                        {% endif %}
+                        {% elif account == "instructor" %}
                         <form action="/update_request" method="POST" enctype="multipart/form-data">
                             <input type=hidden name="action" value="accept_request">
                             <input type=hidden name="request_id" value={{ request.uuid }}>
