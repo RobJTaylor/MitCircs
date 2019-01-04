@@ -2,7 +2,14 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
+inbound_services:
+- mail
+
 handlers:
+- url: /_ah/mail/.+
+  script: inbound_mail.app
+  login: admin
+
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico

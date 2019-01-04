@@ -226,8 +226,6 @@ def settings_handler():
         session['success'] = "Your account has been updated to an admin account"   
         return redirect(url_for('dashboard'))
 
-
-
 @app.route('/admin_panel', methods=['GET', 'POST'])
 def admin_panel():
     users = User.query(User.id == session['userId'])
@@ -456,7 +454,6 @@ def serve(blobKey):
     response = make_response(blobInfo.open().read())
     response.headers['Content-Type'] = blobInfo.content_type
     return response
-
 
 @app.route('/sign-out')
 def signOut():
