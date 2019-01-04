@@ -82,7 +82,7 @@
                         <td>{{ request.reason }}</td>
                         <td>{{ request.instructor }}</td>
                         <td>{{ request.description }}</td>
-                        <td>PLACEHOLDER</td>
+                        <td><a class="btn btn-info" href="/serve/{{ request.file_key }}" role="button">Download File</a></td>
                         {% if request.status == "Awaiting Review" %}
                         <td><span class="badge badge-secondary">Awaiting Review</span></td>
                         {% elif request.status == "Info Required" %}

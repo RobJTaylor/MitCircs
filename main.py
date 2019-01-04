@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 import webapp2, logging, os
-from flask import Flask, jsonify, request, render_template, redirect, url_for, session
+from flask import Flask, jsonify, request, render_template, redirect, url_for, session, make_response
 import flask_cors
 from google.appengine.ext import ndb, blobstore, webapp
 from google.appengine.ext.webapp import blobstore_handlers
@@ -29,7 +29,7 @@ from werkzeug.http import parse_options_header
 from google.appengine.api import mail
 import uuid
 
-ALLOWED_EXTENSIONS = set (['doc', 'docx', 'pdf', 'jpg', 'jpeg'])
+ALLOWED_EXTENSIONS = set (['doc', 'docx'])
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mitcircs_super_secret_key'
@@ -130,7 +130,6 @@ def submit_handler():
     if file and extension_check(file.filename):
         header = file.headers['Content-Type']
         blob_string = parse_options_header(header)[1]['blob-key']
-        blob_string = blob_string.replace("encoded_gs_file:","")
         blob_key = BlobKey(blob_string)
         supportingDocument = SupportingDocument(
             user = session['userId'],
@@ -450,6 +449,13 @@ def viewRequest():
         action = ""
 
     return render_template('view_request.html', userRequest = userRequest, action = action)
+
+@app.route('/serve/<blobKey>', methods=['GET', 'POST'])
+def serve(blobKey):
+    blobInfo = blobstore.get(blobKey)
+    response = make_response(blobInfo.open().read())
+    response.headers['Content-Type'] = blobInfo.content_type
+    return response
 
 
 @app.route('/sign-out')
