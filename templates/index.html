@@ -5,7 +5,8 @@
     <!-- Page Specific CSS -->
     <link rel="stylesheet" type="text/css" href="/static/index.css">
     <!-- Ajax Import -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -29,14 +30,15 @@
     </nav>
 
     {% if error is defined %}
-        <div class="alert alert-danger" role="alert">
-            <strong>Error:</strong> There was a problem logging you in, please try again.
-        </div>
+    <div class="alert alert-danger" role="alert">
+        <strong>Error:</strong> There was a problem logging you in, please try again.
+    </div>
     {% endif %}
 
     <div class="login jumbotron">
         <h1 class="display-4">Welcome to MitCircs</h1>
-        <p class="lead">MitCircs is an online Mitigating Circumstances system. Please login or sign up using one of the services below.</p>
+        <p class="lead">MitCircs is an online Mitigating Circumstances system. Please login or sign up using one of the
+            services below.</p>
         <div id="firebaseui-auth-container" class="auth"></div>
     </div>
 
