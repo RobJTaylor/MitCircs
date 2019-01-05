@@ -58,68 +58,71 @@
     </nav>
 
     <div class="container-fluid">
-        <div class="jumbotron">
+        <div class="jumbotron jumbotron-fluid">
             <h1 class="display-5">Manage Requests</h1>
             {% if requests %}
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Reason</th>
-                        <th scope="col">Instructor</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Supporting File</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Request Options</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for request in requests %}
-                    <tr>
-                        <td>{{ request.uuid }}</td>
-                        <td>{{ request.name }}</td>
-                        <td>{{ request.reason }}</td>
-                        <td>{{ request.instructor }}</td>
-                        <td>{{ request.description }}</td>
-                        <td><a class="btn btn-info" href="/serve/{{ request.file_key }}" role="button">Download File</a></td>
-                        {% if request.status == "Awaiting Review" %}
-                        <td><span class="badge badge-secondary">Awaiting Review</span></td>
-                        {% elif request.status == "Info Required" %}
-                        <td><span class="badge badge-warning">More Info Required</span></td>
-                        {% elif request.status == "Declined" %}
-                        <td><span class="badge badge-danger">Declined</span></td>
-                        {% elif request.status == "Approved" %}
-                        <td><span class="badge badge-success">Approved</span></td>
-                        {% endif %}
-                        {% if account == "student" %}
-                        {% if request.status == "Info Required" %}
-                        <form action="/view_request" method="POST" enctype="multipart/form-data">
-                            <input type="hidden" name="action" value="update_request">
-                            <input type=hidden name="request_id" value={{ request.uuid }}>
-                            <td><button type="submit" class="btn btn-warning">Provide Requested Info</button></td>
-                        </form>
-                        {% endif %}
-                        {% elif account == "instructor" %}
-                        <form action="/update_request" method="POST" enctype="multipart/form-data">
-                            <input type=hidden name="action" value="accept_request">
-                            <input type=hidden name="request_id" value={{ request.uuid }}>
-                            <td><button type="submit" class="btn btn-success">Accept Request</button></td>
-                        </form>
-                        <form action="/update_request" method="POST" enctype="multipart/form-data">
-                            <input type=hidden name="action" value="decline_request">
-                            <input type=hidden name="request_id" value={{ request.uuid }}>
-                            <td><button type="submit" class="btn btn-danger">Decline Request</button></td>
-                        </form>
-                        <form action="/request_info" method="POST" enctype="multipart/form-data">
-                            <input type=hidden name="request_id" value={{ request.uuid }}>
-                            <td><button type="submit" class="btn btn-warning">Request Info</button></td>
-                        </form>
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Instructor</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Supporting File</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Request Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in requests %}
+                        <tr>
+                            <td>{{ request.uuid }}</td>
+                            <td>{{ request.name }}</td>
+                            <td>{{ request.reason }}</td>
+                            <td>{{ request.instructor }}</td>
+                            <td>{{ request.description }}</td>
+                            <td><a class="btn btn-info" href="/serve/{{ request.file_key }}" role="button">Download
+                                    File</a></td>
+                            {% if request.status == "Awaiting Review" %}
+                            <td><span class="badge badge-secondary">Awaiting Review</span></td>
+                            {% elif request.status == "Info Required" %}
+                            <td><span class="badge badge-warning">More Info Required</span></td>
+                            {% elif request.status == "Declined" %}
+                            <td><span class="badge badge-danger">Declined</span></td>
+                            {% elif request.status == "Approved" %}
+                            <td><span class="badge badge-success">Approved</span></td>
+                            {% endif %}
+                            {% if account == "student" %}
+                            {% if request.status == "Info Required" %}
+                            <form action="/view_request" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="action" value="update_request">
+                                <input type=hidden name="request_id" value={{ request.uuid }}>
+                                <td><button type="submit" class="btn btn-warning">Provide Requested Info</button></td>
+                            </form>
+                            {% endif %}
+                            {% elif account == "instructor" %}
+                            <form action="/update_request" method="POST" enctype="multipart/form-data">
+                                <input type=hidden name="action" value="accept_request">
+                                <input type=hidden name="request_id" value={{ request.uuid }}>
+                                <td><button type="submit" class="btn btn-success">Accept Request</button></td>
+                            </form>
+                            <form action="/update_request" method="POST" enctype="multipart/form-data">
+                                <input type=hidden name="action" value="decline_request">
+                                <input type=hidden name="request_id" value={{ request.uuid }}>
+                                <td><button type="submit" class="btn btn-danger">Decline Request</button></td>
+                            </form>
+                            <form action="/request_info" method="POST" enctype="multipart/form-data">
+                                <input type=hidden name="request_id" value={{ request.uuid }}>
+                                <td><button type="submit" class="btn btn-warning">Request Info</button></td>
+                            </form>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
             <h2>You have not made any requests.</h2>
             {% endif %}
