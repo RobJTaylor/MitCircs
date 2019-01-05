@@ -1,5 +1,7 @@
 $(function () {
 
+    //Firebase auth setup file
+
     // This is the host for the backend.
     var backendHostUrl = 'https://mitcircs.robtaylor.info';
 
@@ -20,33 +22,33 @@ $(function () {
     function configureFirebaseLogin() {
 
         firebase.initializeApp(config);
-    
+
         // [START onAuthStateChanged]
         firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
                 var name = user.displayName;
-    
-                    /* If the provider gives a display name, use the name for the
-                    personal welcome message. Otherwise, use the user's email. */
-                    var welcomeName = name ? name : user.email;
-    
-                    user.getToken().then(function (idToken) {
-                        userIdToken = idToken;
-                        user_name = user.name || user.email;
-                        user_email = user.email;
-    
-                        /* Now that the user is authenicated, fetch the notes. */
-                        ajaxToken(userIdToken, user_name, user_email);
-                    });
-    
-                } else {
-    
-                }
-                // [END onAuthStateChanged]
-    
-            });
-    
-        }
+
+                /* If the provider gives a display name, use the name for the
+                personal welcome message. Otherwise, use the user's email. */
+                var welcomeName = name ? name : user.email;
+
+                user.getToken().then(function (idToken) {
+                    userIdToken = idToken;
+                    user_name = user.name || user.email;
+                    user_email = user.email;
+
+                    /* Now that the user is authenicated, fetch the notes. */
+                    ajaxToken(userIdToken, user_name, user_email);
+                });
+
+            } else {
+
+            }
+            // [END onAuthStateChanged]
+
+        });
+
+    }
 
     function configureFirebaseWidget() {
         var uiConfig = {
@@ -70,9 +72,9 @@ $(function () {
         $.ajax({
             type: 'POST',
             url: '/',
-            headers: { 
-                'Authorization': 'Bearer ' + userIdToken, 
-                'Email': user_email, 
+            headers: {
+                'Authorization': 'Bearer ' + userIdToken,
+                'Email': user_email,
                 'Username': user_name,
             },
             success: function (response) {
@@ -85,7 +87,7 @@ $(function () {
         });
     }
 
-    $('#signOut').click(function(e) {
+    $('#signOut').click(function (e) {
         configureFirebaseLogin();
         firebase.auth().signOut().then(function () {
             console.log("Sign out successful");
@@ -100,4 +102,3 @@ $(function () {
         configureFirebaseWidget();
     }
 });
-
