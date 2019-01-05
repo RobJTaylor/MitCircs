@@ -82,8 +82,11 @@
             <h2 class="display-5">Account type: {{account}}</h2>
             <div class="center">
                 <a class="btn btn-primary btn-lg" href="/submit_request" role="button">Submit a request</a>
-                <a class="btn btn-primary btn-lg" href="/manage_requests" role="button">Manage existing
-                    requests</a>
+                <a class="btn btn-primary btn-lg" href="/manage_requests" role="button">Manage all requests</a>
+                {% if account == "instructor" %}
+                <a class="btn btn-primary btn-lg" href="/manage_requests_ar" role="button">Manage requests awaiting
+                    review</a>
+                {% endif %}
             </div>
         </div>
     </div>

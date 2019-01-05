@@ -189,6 +189,12 @@ def manage_requests():
 
     return render_template('manage_requests.html', requests = query, account = session['account'])
 
+@app.route('/manage_requests_ar', methods=['GET', 'POST'])
+def manage_requests_ar():
+    query = Request.query(Request.instructor == session['userId'], Request.status == "Awaiting Review")
+
+    return render_template('manage_requests.html', requests = query, account = session['account'])
+
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
     return render_template('settings.html')
