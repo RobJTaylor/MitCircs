@@ -5,3 +5,4 @@ google-auth==1.6.1
 requests==2.20.1
 requests-toolbelt==0.8.0
 jinja2==2.10
+validate_email==1.3

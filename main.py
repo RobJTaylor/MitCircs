@@ -138,7 +138,7 @@ def submit_handler():
         supportingDocument.put()
 
         requestId = str(uuid.uuid4())
-        submit = submit_form(id =requestId, email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_key = blob_key)
+        submit = submit_form(id =requestId, email = request.form['email'], name = request.form['name'], reason = request.form['reason'], instructor = request.form['instructor'], description = request.form['description'], file_key = blob_key, requestType = "")
 
         #Instructor Email
         instructorMessage = mail.EmailMessage(sender="MitCircs <robert.j.taylor117@gmail.com>", subject="MitCircs - New Submission")
@@ -469,8 +469,12 @@ def registerUser(email, name):
         user = User(id = email, name = name, account = "student")
         return user.put()
 
-def submit_form(id, email, name, reason, instructor, description, file_key):
-    request = Request(uuid = id, email = email, name = name, reason = reason, instructor = instructor, description = description, file_key = file_key, status = "Awaiting Review")
+def submit_form(id, email, name, reason, instructor, description, file_key, requestType):
+    if requestType == "email":
+        request = Request(uuid = id, email = email, name = name, reason = reason, instructor = instructor, description = description, file_key = file_key, status = "Awaiting Review")
+    else:
+        request = Request(uuid = id, email = email, name = name, reason = reason, instructor = instructor, description = description, status = "Awaiting Review")
+
     return request.put()
 
 def extension_check(filename):
