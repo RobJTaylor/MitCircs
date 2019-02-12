@@ -7,12 +7,12 @@ $(function () {
 
     // Initialize Firebase
     var config = {
-        apiKey: "AIzaSyBpbVNSh-Fd6Rg51Hmm6quZ_mJWQ-7hGVM",
-        authDomain: "mitcircs-rt.firebaseapp.com",
-        databaseURL: "https://mitcircs-rt.firebaseio.com",
-        projectId: "mitcircs-rt",
-        storageBucket: "mitcircs-rt.appspot.com",
-        messagingSenderId: "797167968095"
+        apiKey: //YOUR_API_KEY_HERE,
+        authDomain: //YOUR_DOMAIN_HERE,
+        databaseURL: //YOUR_DATABASE_URL_HERE,
+        projectId: //YOUR_FIREBASE_PROJECT_ID_HERE,
+        storageBucket: //YOUR_STORAGE_BUCKET_HERE,
+        messagingSenderId: //YOUR_MESSAGING_ID_HERE
     };
 
     // This is passed into the backend to authenticate the user.
