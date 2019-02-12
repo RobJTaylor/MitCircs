@@ -12,3 +12,6 @@ MitCircs is a mitigating circumstances system. It deals with recieving requests 
 
 # What do I need to do to get it up and running?
 You will need to import the project and upload it to Google App Engine. Firebase authentication credentials will need to be replaced with your own generated from https://firebase.google.com/products/auth/. The ndb should set itself up, though you will need to manually set a user's status to admin in the ndb.
+
+# Can I access the system at the URL in the code?
+No, GAE costs real money which I cannot justify on hosting an old project.
