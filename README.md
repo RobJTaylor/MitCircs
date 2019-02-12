@@ -1,5 +1,5 @@
 # MitCircs
-## Advanced Development - [Bournemouth University] (https://www.bournemouth.ac.uk/) Final Year Submission
+## Advanced Development - [Bournemouth University](https://www.bournemouth.ac.uk/) Final Year Submission
 
 # What is MitCircs?
 MitCircs is a mitigating circumstances system. It deals with recieving requests (via form or email) and managing those requests. It demonstrates this on a small scale using Google App Engine. There are a couple of large issues with the code (using UUID's instead of ndb's indexing, all code being in main, etc.) but it is fully functional to the assignment specification.
